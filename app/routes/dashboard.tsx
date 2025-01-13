@@ -1,16 +1,15 @@
 import { Button } from "@/components/ui/button";
 import { createFileRoute, Link } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/")({
-  component: Home,
+export const Route = createFileRoute("/dashboard")({
+  component: RouteComponent,
 });
 
-function Home() {
+function RouteComponent() {
   return (
-    <div className="p-2">
-      <h3>Welcome Home!!!</h3>
+    <div>
       <Button asChild>
-        <Link to="/dashboard">Dashboard</Link>
+        <Link to="/scoreboard/new">New ScoreBoard</Link>
       </Button>
     </div>
   );
