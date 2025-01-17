@@ -1,8 +1,10 @@
+import { useAppSession } from "@/utils/session";
 import { queryOptions } from "@tanstack/react-query";
 import { redirect } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/start";
 import db from "db/connection";
 import { users } from "db/schema";
+import { eq } from "drizzle-orm";
 import { z } from "zod";
 
 export const createUserSchema = z.object({
@@ -16,17 +18,18 @@ export const createUser = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     // check if user already exists
     const user = await db.query.users.findFirst({
-      where: { email: data.email },
+      where: eq(users.email, data.email),
     });
-    console.log(data);
-    const res = await db
-      .insert(users)
-      .values(data)
-      .returning()
-      .onConflictDoNothing();
-    if (res.length === 0) {
-      throw redirect({ statusCode: 400 });
+
+    if (user) {
+      return new Response("Email already used", { status: 400 });
     }
+
+    const res = await db.insert(users).values(data).returning();
+
+    const session = await useAppSession();
+    session.update({ userEmail: res[0].email });
+
     throw redirect({ to: "/dashboard" });
   });
 

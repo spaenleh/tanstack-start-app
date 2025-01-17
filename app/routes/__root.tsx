@@ -100,31 +100,35 @@ function RootDocument({ children }: Readonly<{ children: React.ReactNode }>) {
         <Meta />
       </head>
       <body>
-        <div className="p-2 flex gap-2 text-lg">
-          <Link
-            to="/"
-            activeProps={{
-              className: "font-bold",
-            }}
-            activeOptions={{ exact: true }}
-          >
-            Home
-          </Link>{" "}
-          <Link
-            to="/users"
-            activeProps={{
-              className: "font-bold",
-            }}
-            activeOptions={{ exact: true }}
-          >
-            Users
-          </Link>
+        <div className="p-2 flex gap-2 text-lg justify-between align-center">
+          <span>My app</span>
+          <div className="flex gap-2">
+            <Link
+              to="/"
+              activeProps={{
+                className: "font-bold",
+              }}
+              activeOptions={{ exact: true }}
+            >
+              Home
+            </Link>{" "}
+            <Link
+              to="/users"
+              activeProps={{
+                className: "font-bold",
+              }}
+              activeOptions={{ exact: true }}
+            >
+              Users
+            </Link>
+          </div>
           {user ? (
             <Link to="/logout">Logout</Link>
           ) : (
             <Link to="/login">Login</Link>
           )}
         </div>
+
         <hr />
         {children}
         <ScrollRestoration />

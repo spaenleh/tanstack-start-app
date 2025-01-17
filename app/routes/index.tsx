@@ -7,14 +7,16 @@ export const Route = createFileRoute("/")({
 
 function Home() {
   return (
-    <div className="p-2">
+    <div className="py-[100px] flex flex-col place-items-center gap-5 bg-slate-200">
       <h3>Welcome Home!!!</h3>
-      <Button asChild>
-        <Link to="/dashboard">Dashboard</Link>
-      </Button>
-      <Button asChild variant="outline">
-        <Link to="/register">Crée un compte</Link>
-      </Button>
+      <div className="flex flex-col gap-2">
+        <Button asChild>
+          <Link to="/dashboard">Dashboard</Link>
+        </Button>
+        <Button asChild variant="outline">
+          <Link to="/register">Crée un compte</Link>
+        </Button>
+      </div>
     </div>
   );
 }
