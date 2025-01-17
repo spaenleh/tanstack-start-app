@@ -6,13 +6,27 @@ import {
 } from "@tanstack/react-router";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
-import { Meta, Scripts } from "@tanstack/start";
+import { createServerFn, Meta, Scripts } from "@tanstack/start";
 import * as React from "react";
 import type { QueryClient } from "@tanstack/react-query";
 import { DefaultCatchBoundary } from "@/components/DefaultCatchBoundary";
 import { NotFound } from "@/components/NotFound";
 import appCss from "@/styles/app.css?url";
 import { seo } from "@/utils/seo";
+import { useAppSession } from "@/utils/session";
+
+const fetchUser = createServerFn({ method: "GET" }).handler(async () => {
+  // We need to auth on the server so we have access to secure cookies
+  const session = await useAppSession();
+
+  if (!session.data.userEmail) {
+    return null;
+  }
+
+  return {
+    email: session.data.userEmail,
+  };
+});
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
@@ -55,6 +69,10 @@ export const Route = createRootRouteWithContext<{
       { rel: "icon", href: "/favicon.ico" },
     ],
   }),
+  async beforeLoad() {
+    const user = await fetchUser();
+    return { user };
+  },
   errorComponent: (props) => {
     return (
       <RootDocument>
@@ -74,7 +92,8 @@ function RootComponent() {
   );
 }
 
-function RootDocument({ children }: { children: React.ReactNode }) {
+function RootDocument({ children }: Readonly<{ children: React.ReactNode }>) {
+  const { user } = Route.useRouteContext();
   return (
     <html>
       <head>
@@ -92,14 +111,19 @@ function RootDocument({ children }: { children: React.ReactNode }) {
             Home
           </Link>{" "}
           <Link
-            // @ts-expect-error
-            to="/this-route-does-not-exist"
+            to="/users"
             activeProps={{
               className: "font-bold",
             }}
+            activeOptions={{ exact: true }}
           >
-            This Route Does Not Exist
+            Users
           </Link>
+          {user ? (
+            <Link to="/logout">Logout</Link>
+          ) : (
+            <Link to="/login">Login</Link>
+          )}
         </div>
         <hr />
         {children}

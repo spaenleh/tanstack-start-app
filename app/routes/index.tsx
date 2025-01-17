@@ -12,6 +12,9 @@ function Home() {
       <Button asChild>
         <Link to="/dashboard">Dashboard</Link>
       </Button>
+      <Button asChild variant="outline">
+        <Link to="/register">Crée un compte</Link>
+      </Button>
     </div>
   );
 }

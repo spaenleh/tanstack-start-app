@@ -7,8 +7,8 @@
     "dev": "vinxi dev",
     "build": "vinxi build",
     "start": "vinxi start",
-    "db:push": "pnpx drizzle-kit push",
-    "db:studio": "pnpx drizzle-kit studio"
+    "db:push": "pnpm drizzle-kit push",
+    "db:studio": "pnpm drizzle-kit studio"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
