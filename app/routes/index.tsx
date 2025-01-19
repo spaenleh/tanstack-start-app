@@ -14,7 +14,7 @@ function Home() {
           <Link to="/dashboard">Dashboard</Link>
         </Button>
         <Button asChild variant="outline">
-          <Link to="/register">Crée un compte</Link>
+          <Link to="/login">Login or create an account</Link>
         </Button>
       </div>
     </div>

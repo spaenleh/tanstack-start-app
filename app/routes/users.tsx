@@ -27,7 +27,7 @@ function UsersComponent() {
     <ul>
       {allUsersQuery.data.map((user) => (
         <li key={user.id}>
-          {user.name} ({user.email})
+          {user.name} ({user.id})
         </li>
       ))}
     </ul>

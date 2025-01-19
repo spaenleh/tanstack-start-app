@@ -1,3 +1,4 @@
+import { hashPassword } from "@/utils/auth";
 import { useAppSession } from "@/utils/session";
 import { queryOptions } from "@tanstack/react-query";
 import { redirect } from "@tanstack/react-router";
@@ -7,36 +8,72 @@ import { users } from "db/schema";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 
-export const createUserSchema = z.object({
+export const userCredentialsSchema = z.object({
   name: z.string().min(3).max(50),
-  email: z.string().email(),
+  password: z.string().min(8),
 });
-export type CreateUserSchema = z.infer<typeof createUserSchema>;
+export type UserCredentials = z.infer<typeof userCredentialsSchema>;
 
 export const createUser = createServerFn({ method: "POST" })
-  .validator(createUserSchema)
+  .validator(userCredentialsSchema)
   .handler(async ({ data }) => {
     // check if user already exists
     const user = await db.query.users.findFirst({
-      where: eq(users.email, data.email),
+      where: eq(users.name, data.name),
     });
 
+    const hashedPassword = await hashPassword(data.password);
+    const session = await useAppSession();
+
     if (user) {
-      return new Response("Email already used", { status: 400 });
+      // passwords do not match return user already exists
+      if (hashedPassword !== user.passwordHash) {
+        await session.clear();
+        return { error: true, message: "User already exists" };
+      }
+      // passwords match, log the user in.
+      await session.update({ userName: user.name });
+      throw redirect({ to: "/dashboard" });
     }
 
-    const res = await db.insert(users).values(data).returning();
+    const res = await db
+      .insert(users)
+      .values({ name: data.name, passwordHash: hashedPassword })
+      .returning();
+
+    await session.update({ userName: res[0].name });
+
+    throw redirect({ to: "/dashboard" });
+  });
+
+export const loginUserFn = createServerFn({ method: "POST" })
+  .validator(userCredentialsSchema)
+  .handler(async ({ data }) => {
+    const user = await db.query.users.findFirst({
+      where: eq(users.name, data.name),
+    });
+
+    if (!user) {
+      return { error: true, message: "User does not exist" };
+    }
+
+    const hashedPassword = await hashPassword(data.password);
+    if (hashedPassword !== user.passwordHash) {
+      return { error: true, message: "Credentials error" };
+    }
 
     const session = await useAppSession();
-    session.update({ userEmail: res[0].email });
+
+    session.update({ userName: user.name });
 
     throw redirect({ to: "/dashboard" });
   });
 
 export const getAllUsers = createServerFn({ method: "GET" }).handler(
   async () => {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    return db.select().from(users);
+    // add artificial delay
+    // await new Promise((resolve) => setTimeout(resolve, 1000));
+    return db.query.users.findMany({ columns: { passwordHash: false } });
   }
 );
 export const getAllUsersQueryOptions = () =>

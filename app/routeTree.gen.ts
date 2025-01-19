@@ -12,7 +12,6 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as UsersImport } from './routes/users'
-import { Route as RegisterImport } from './routes/register'
 import { Route as LogoutImport } from './routes/logout'
 import { Route as LoginImport } from './routes/login'
 import { Route as DashboardImport } from './routes/dashboard'
@@ -24,12 +23,6 @@ import { Route as ScoreboardNewImport } from './routes/scoreboard/new'
 const UsersRoute = UsersImport.update({
   id: '/users',
   path: '/users',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const RegisterRoute = RegisterImport.update({
-  id: '/register',
-  path: '/register',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -95,13 +88,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LogoutImport
       parentRoute: typeof rootRoute
     }
-    '/register': {
-      id: '/register'
-      path: '/register'
-      fullPath: '/register'
-      preLoaderRoute: typeof RegisterImport
-      parentRoute: typeof rootRoute
-    }
     '/users': {
       id: '/users'
       path: '/users'
@@ -126,7 +112,6 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
   '/logout': typeof LogoutRoute
-  '/register': typeof RegisterRoute
   '/users': typeof UsersRoute
   '/scoreboard/new': typeof ScoreboardNewRoute
 }
@@ -136,7 +121,6 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
   '/logout': typeof LogoutRoute
-  '/register': typeof RegisterRoute
   '/users': typeof UsersRoute
   '/scoreboard/new': typeof ScoreboardNewRoute
 }
@@ -147,7 +131,6 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
   '/logout': typeof LogoutRoute
-  '/register': typeof RegisterRoute
   '/users': typeof UsersRoute
   '/scoreboard/new': typeof ScoreboardNewRoute
 }
@@ -159,25 +142,16 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/login'
     | '/logout'
-    | '/register'
     | '/users'
     | '/scoreboard/new'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/dashboard'
-    | '/login'
-    | '/logout'
-    | '/register'
-    | '/users'
-    | '/scoreboard/new'
+  to: '/' | '/dashboard' | '/login' | '/logout' | '/users' | '/scoreboard/new'
   id:
     | '__root__'
     | '/'
     | '/dashboard'
     | '/login'
     | '/logout'
-    | '/register'
     | '/users'
     | '/scoreboard/new'
   fileRoutesById: FileRoutesById
@@ -188,7 +162,6 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   LoginRoute: typeof LoginRoute
   LogoutRoute: typeof LogoutRoute
-  RegisterRoute: typeof RegisterRoute
   UsersRoute: typeof UsersRoute
   ScoreboardNewRoute: typeof ScoreboardNewRoute
 }
@@ -198,7 +171,6 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   LoginRoute: LoginRoute,
   LogoutRoute: LogoutRoute,
-  RegisterRoute: RegisterRoute,
   UsersRoute: UsersRoute,
   ScoreboardNewRoute: ScoreboardNewRoute,
 }
@@ -217,7 +189,6 @@ export const routeTree = rootRoute
         "/dashboard",
         "/login",
         "/logout",
-        "/register",
         "/users",
         "/scoreboard/new"
       ]
@@ -233,9 +204,6 @@ export const routeTree = rootRoute
     },
     "/logout": {
       "filePath": "logout.tsx"
-    },
-    "/register": {
-      "filePath": "register.tsx"
     },
     "/users": {
       "filePath": "users.tsx"

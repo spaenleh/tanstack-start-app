@@ -1,12 +1,13 @@
 import { useSession } from "vinxi/http";
 import type { User } from "db/schema";
+import { SESSION_SECRET } from "@/env";
 
 type SessionUser = {
-  userEmail: User["email"];
+  userName: User["name"];
 };
 
 export function useAppSession() {
   return useSession<SessionUser>({
-    password: "ChangeThisBeforeShippingToProdOrYouWillBeFired",
+    password: SESSION_SECRET,
   });
 }
